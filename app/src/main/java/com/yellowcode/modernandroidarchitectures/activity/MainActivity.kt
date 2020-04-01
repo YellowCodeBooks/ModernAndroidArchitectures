@@ -32,6 +32,11 @@ class MainActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(context)
             adapter = countriesAdapter
         }
+        countriesAdapter.setOnItemClickListener(object : CountriesAdapter.OnItemClickListener {
+            override fun onItemClick(country: Country) {
+                Toast.makeText(this@MainActivity, "Country ${country.name}, capital is ${country.capital} clicked", Toast.LENGTH_SHORT).show()
+            }
+        })
 
         searchField.addTextChangedListener(object : TextWatcher {
 
