@@ -38,8 +38,8 @@ class CountriesAdapter(val countries: ArrayList<Country>) :
         private val countryCapital = view.tvCapital
 
         fun bind(country: Country, listener: OnItemClickListener?) {
-            countryName.text = country.name
-            countryCapital.text = country.capital
+            countryName.text = country.name.common
+            countryCapital.text = country.capital?.joinToString(", ")
             itemView.setOnClickListener { listener?.onItemClick(country) }
         }
     }

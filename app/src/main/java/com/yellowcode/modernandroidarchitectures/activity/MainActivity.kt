@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable) {
                 if (s.isNotEmpty()) {
                     val filterCountries = countries?.filter { country ->
-                        country.name.contains(s.toString(), true)
+                        country.name.common.contains(s.toString(), true)
                     }
                     filterCountries?.let { countriesAdapter.updateCountries(it) }
                 } else {

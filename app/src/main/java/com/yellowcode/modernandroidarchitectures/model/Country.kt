@@ -1,3 +1,5 @@
 package com.yellowcode.modernandroidarchitectures.model
 
-data class Country(val name: String, val capital: String)
+data class Name(val common: String)
+
+data class Country(val name: Name, val capital: List<String>?)
