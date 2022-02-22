@@ -1,12 +1,10 @@
 package com.yellowcode.modernandroidarchitectures.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.yellowcode.modernandroidarchitectures.R
+import com.yellowcode.modernandroidarchitectures.databinding.ItemCountryBinding
 import com.yellowcode.modernandroidarchitectures.model.Country
-import kotlinx.android.synthetic.main.item_country.view.*
 
 class CountriesAdapter(val countries: ArrayList<Country>) :
     RecyclerView.Adapter<CountriesAdapter.CountryViewHolder>() {
@@ -24,7 +22,7 @@ class CountriesAdapter(val countries: ArrayList<Country>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = CountryViewHolder(
-        LayoutInflater.from(parent.context).inflate(R.layout.item_country, parent, false)
+        ItemCountryBinding.inflate(LayoutInflater.from(parent.context))
     )
 
     override fun getItemCount() = countries.size
@@ -33,14 +31,15 @@ class CountriesAdapter(val countries: ArrayList<Country>) :
         holder.bind(countries[position], listener)
     }
 
-    class CountryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val countryName = view.tvCountry
-        private val countryCapital = view.tvCapital
+    class CountryViewHolder(private val binding: ItemCountryBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
         fun bind(country: Country, listener: OnItemClickListener?) {
-            countryName.text = country.name.common
-            countryCapital.text = country.capital?.joinToString(", ")
-            itemView.setOnClickListener { listener?.onItemClick(country) }
+            binding.apply {
+                tvCountry.text = country.name.common
+                tvCapital.text = country.capital?.joinToString(", ")
+                root.setOnClickListener { listener?.onItemClick(country) }
+            }
         }
     }
 
