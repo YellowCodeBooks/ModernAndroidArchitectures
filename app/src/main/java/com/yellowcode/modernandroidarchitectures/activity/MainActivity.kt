@@ -9,26 +9,28 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yellowcode.modernandroidarchitecruesdemo.networking.CountriesApi
 import com.yellowcode.modernandroidarchitecruesdemo.networking.CountriesService
-import com.yellowcode.modernandroidarchitectures.R
 import com.yellowcode.modernandroidarchitectures.adapter.CountriesAdapter
+import com.yellowcode.modernandroidarchitectures.databinding.ActivityMainBinding
 import com.yellowcode.modernandroidarchitectures.model.Country
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainBinding
     private var apiService: CountriesApi? = null
     private val countriesAdapter = CountriesAdapter(arrayListOf())
     private var countries: List<Country>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         apiService = CountriesService.create()
 
-        listView?.apply {
+        binding.listView?.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = countriesAdapter
         }
@@ -38,7 +40,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        searchField.addTextChangedListener(object : TextWatcher {
+        binding.searchField.addTextChangedListener(object : TextWatcher {
 
             override fun afterTextChanged(s: Editable) {
                 if (s.isNotEmpty()) {
@@ -68,18 +70,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onFetchCountries() {
-        listView.visibility = View.GONE
-        progress.visibility = View.VISIBLE
-        searchField.isEnabled = false
+        binding.listView.visibility = View.GONE
+        binding.progress.visibility = View.VISIBLE
+        binding.searchField.isEnabled = false
 
         apiService?.let {
             it.getCountries()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ result ->
-                    listView.visibility = View.VISIBLE
-                    progress.visibility = View.GONE
-                    searchField.isEnabled = true
+                    binding.listView.visibility = View.VISIBLE
+                    binding.progress.visibility = View.GONE
+                    binding.searchField.isEnabled = true
 
                     countries = result
                     countriesAdapter.updateCountries(result)
@@ -90,9 +92,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onError() {
-        listView.visibility = View.GONE
-        progress.visibility = View.GONE
-        searchField.isEnabled = false
+        binding.listView.visibility = View.GONE
+        binding.progress.visibility = View.GONE
+        binding.searchField.isEnabled = false
 
         Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
     }
