@@ -7,24 +7,26 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.yellowcode.modernandroidarchitectures.R
 import com.yellowcode.modernandroidarchitectures.contoller.CountriesController
+import com.yellowcode.modernandroidarchitectures.databinding.ActivityCountriesBinding
 import com.yellowcode.modernandroidarchitectures.model.CountryModel
-import kotlinx.android.synthetic.main.activity_main.*
 
 class CountriesActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityCountriesBinding
     lateinit var countriesController: CountriesController
     private val countriesAdapter = CountriesAdapter(arrayListOf())
     private var countries: List<CountryModel> = listOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityCountriesBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         countriesController = CountriesController(this)
 
-        listView?.apply {
+        binding.listView?.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = countriesAdapter
         }
@@ -34,12 +36,12 @@ class CountriesActivity : AppCompatActivity() {
             }
         })
 
-        searchField.addTextChangedListener(object : TextWatcher {
+        binding.searchField.addTextChangedListener(object : TextWatcher {
 
             override fun afterTextChanged(s: Editable) {
                 if (s.isNotEmpty()) {
                     val filterCountries = countries?.filter { country ->
-                        country.name.contains(s.toString(), true)
+                        country.name.common.contains(s.toString(), true)
                     }
                     filterCountries?.let { countriesAdapter.updateCountries(it) }
                 } else {
@@ -64,26 +66,26 @@ class CountriesActivity : AppCompatActivity() {
     }
 
     fun onFetchCountries() {
-        listView.visibility = View.GONE
-        progress.visibility = View.VISIBLE
-        searchField.isEnabled = false
+        binding.listView.visibility = View.GONE
+        binding.progress.visibility = View.VISIBLE
+        binding.searchField.isEnabled = false
 
         countriesController.onFetchCountries()
     }
 
     fun onSuccessful(result: List<CountryModel>) {
-        listView.visibility = View.VISIBLE
-        progress.visibility = View.GONE
-        searchField.isEnabled = true
+        binding.listView.visibility = View.VISIBLE
+        binding.progress.visibility = View.GONE
+        binding.searchField.isEnabled = true
 
         countries = result
         countriesAdapter.updateCountries(countries)
     }
 
     fun onError() {
-        listView.visibility = View.GONE
-        progress.visibility = View.GONE
-        searchField.isEnabled = false
+        binding.listView.visibility = View.GONE
+        binding.progress.visibility = View.GONE
+        binding.searchField.isEnabled = false
 
         Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
     }
