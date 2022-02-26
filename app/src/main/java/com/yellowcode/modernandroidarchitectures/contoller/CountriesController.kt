@@ -6,18 +6,12 @@ import com.yellowcode.modernandroidarchitectures.view.CountriesActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class CountriesController {
-
-    private var view: CountriesActivity
-    private var apiService: CountriesApi? = null
-
-    constructor(view: CountriesActivity) {
-        this.view = view
-        apiService = CountriesService.create()
-    }
-
+class CountriesController(
+    private val view: CountriesActivity,
+    private val apiService: CountriesApi
+) {
     fun onFetchCountries() {
-        apiService?.let {
+        apiService.let {
             it.getCountries()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -10,11 +10,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.yellowcode.modernandroidarchitectures.contoller.CountriesController
 import com.yellowcode.modernandroidarchitectures.databinding.ActivityCountriesBinding
 import com.yellowcode.modernandroidarchitectures.model.CountryModel
+import com.yellowcode.modernandroidarchitectures.networking.CountriesApi
+import com.yellowcode.modernandroidarchitectures.networking.CountriesService
 
 class CountriesActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCountriesBinding
-    lateinit var countriesController: CountriesController
+    private lateinit var countriesController: CountriesController
+    private lateinit var apiService: CountriesApi
     private val countriesAdapter = CountriesAdapter(arrayListOf())
     private var countries: List<CountryModel> = listOf()
 
@@ -24,9 +27,10 @@ class CountriesActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        countriesController = CountriesController(this)
+        apiService = CountriesService.create()
+        countriesController = CountriesController(this, apiService)
 
-        binding.listView?.apply {
+        binding.listView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = countriesAdapter
         }
@@ -40,12 +44,12 @@ class CountriesActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable) {
                 if (s.isNotEmpty()) {
-                    val filterCountries = countries?.filter { country ->
+                    val filterCountries = countries.filter { country ->
                         country.name.common.contains(s.toString(), true)
                     }
-                    filterCountries?.let { countriesAdapter.updateCountries(it) }
+                    filterCountries.let { countriesAdapter.updateCountries(it) }
                 } else {
-                    countries?.let { countriesAdapter.updateCountries(it) }
+                    countries.let { countriesAdapter.updateCountries(it) }
                 }
             }
 
@@ -65,7 +69,7 @@ class CountriesActivity : AppCompatActivity() {
         onFetchCountries()
     }
 
-    fun onFetchCountries() {
+    private fun onFetchCountries() {
         binding.listView.visibility = View.GONE
         binding.progress.visibility = View.VISIBLE
         binding.searchField.isEnabled = false
