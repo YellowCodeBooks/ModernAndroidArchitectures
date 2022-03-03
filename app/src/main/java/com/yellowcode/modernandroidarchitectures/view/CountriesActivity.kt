@@ -7,17 +7,16 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.yellowcode.modernandroidarchitectures.contoller.CountriesController
+import com.yellowcode.modernandroidarchitectures.presenter.CountriesPresenter
 import com.yellowcode.modernandroidarchitectures.databinding.ActivityCountriesBinding
 import com.yellowcode.modernandroidarchitectures.model.CountryModel
-import com.yellowcode.modernandroidarchitectures.networking.CountriesApi
 import com.yellowcode.modernandroidarchitectures.networking.CountriesService
+import com.yellowcode.modernandroidarchitectures.presenter.CountriesContract
 
-class CountriesActivity : AppCompatActivity() {
+class CountriesActivity : AppCompatActivity(), CountriesContract.ViewInterface {
 
     private lateinit var binding: ActivityCountriesBinding
-    private lateinit var countriesController: CountriesController
-    private lateinit var apiService: CountriesApi
+    private lateinit var countriesPresenter: CountriesPresenter
     private val countriesAdapter = CountriesAdapter(arrayListOf())
     private var countries: List<CountryModel> = listOf()
 
@@ -27,8 +26,8 @@ class CountriesActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        apiService = CountriesService.create()
-        countriesController = CountriesController(this, apiService)
+        val apiService = CountriesService.create()
+        countriesPresenter = CountriesPresenter(this, apiService)
 
         binding.listView.apply {
             layoutManager = LinearLayoutManager(context)
@@ -36,7 +35,7 @@ class CountriesActivity : AppCompatActivity() {
         }
         countriesAdapter.setOnItemClickListener(object : CountriesAdapter.OnItemClickListener {
             override fun onItemClick(country: CountryModel) {
-                Toast.makeText(this@CountriesActivity, country.getCountryInfo(), Toast.LENGTH_SHORT).show()
+                countriesPresenter.getCountryInfo(country)
             }
         })
 
@@ -74,10 +73,10 @@ class CountriesActivity : AppCompatActivity() {
         binding.progress.visibility = View.VISIBLE
         binding.searchField.isEnabled = false
 
-        countriesController.onFetchCountries()
+        countriesPresenter.onFetchCountries()
     }
 
-    fun onSuccessful(result: List<CountryModel>) {
+    override fun onSuccessful(result: List<CountryModel>) {
         binding.listView.visibility = View.VISIBLE
         binding.progress.visibility = View.GONE
         binding.searchField.isEnabled = true
@@ -86,11 +85,15 @@ class CountriesActivity : AppCompatActivity() {
         countriesAdapter.updateCountries(countries)
     }
 
-    fun onError() {
+    override fun onError() {
         binding.listView.visibility = View.GONE
         binding.progress.visibility = View.GONE
         binding.searchField.isEnabled = false
 
         Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showMessage(message: String) {
+        Toast.makeText(this@CountriesActivity, message, Toast.LENGTH_SHORT).show()
     }
 }
