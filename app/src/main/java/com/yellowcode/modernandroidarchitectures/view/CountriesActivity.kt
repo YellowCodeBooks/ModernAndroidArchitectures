@@ -10,12 +10,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.yellowcode.modernandroidarchitectures.presenter.CountriesPresenter
 import com.yellowcode.modernandroidarchitectures.databinding.ActivityCountriesBinding
 import com.yellowcode.modernandroidarchitectures.model.CountryModel
+import com.yellowcode.modernandroidarchitectures.networking.CountriesApi
 import com.yellowcode.modernandroidarchitectures.networking.CountriesService
 import com.yellowcode.modernandroidarchitectures.presenter.CountriesContract
 
 class CountriesActivity : AppCompatActivity(), CountriesContract.ViewInterface {
 
     private lateinit var binding: ActivityCountriesBinding
+    private lateinit var apiService: CountriesApi
     private lateinit var countriesPresenter: CountriesPresenter
     private val countriesAdapter = CountriesAdapter(arrayListOf())
     private var countries: List<CountryModel> = listOf()
@@ -26,7 +28,7 @@ class CountriesActivity : AppCompatActivity(), CountriesContract.ViewInterface {
         val view = binding.root
         setContentView(view)
 
-        val apiService = CountriesService.create()
+        apiService = CountriesService.create()
         countriesPresenter = CountriesPresenter(this, apiService)
 
         binding.listView.apply {
