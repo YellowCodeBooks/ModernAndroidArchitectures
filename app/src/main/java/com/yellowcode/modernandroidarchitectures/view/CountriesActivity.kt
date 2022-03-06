@@ -17,7 +17,6 @@ import com.yellowcode.modernandroidarchitectures.presenter.CountriesContract
 class CountriesActivity : AppCompatActivity(), CountriesContract.ViewInterface {
 
     private lateinit var binding: ActivityCountriesBinding
-    private lateinit var apiService: CountriesApi
     private lateinit var countriesPresenter: CountriesPresenter
     private val countriesAdapter = CountriesAdapter(arrayListOf())
     private var countries: List<CountryModel> = listOf()
@@ -28,7 +27,7 @@ class CountriesActivity : AppCompatActivity(), CountriesContract.ViewInterface {
         val view = binding.root
         setContentView(view)
 
-        apiService = CountriesService.create()
+        val apiService = CountriesService.create()
         countriesPresenter = CountriesPresenter(this, apiService)
 
         binding.listView.apply {
